@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: FMCW_PostProcessing",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/FMCW_PostProcessing.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}

@@ -108,51 +108,49 @@ class FMCWProcessor:
         plt.show()
 
 
-__name__ == '__main__':
+if __name__ == '__main__':
+    # Define radar and target parameters
+    num_tx = 4
+    num_rx = 4
+    num_chirps = 128
+    num_samples = 1024
+    sampling_rate = 40e6
+    frequency_slope = 200e6 / (num_samples / sampling_rate)
+    wavelength = 3e8 / 77e9  # For a 77 GHz radar
 
+    # Define target parameters
+    target_params = [
+        {"range": 10, "velocity": 20 / 3.6, "aoa": 10, "rcs": 1}  # Range 10m, Velocity 20 km/h, AoA 10 degrees
+    ]
 
-# Define radar and target parameters
-num_tx = 4
-num_rx = 4
-num_chirps = 128
-num_samples = 1024
-sampling_rate = 1e6
-frequency_slope = 200e6 / (num_samples / sampling_rate)
-wavelength = 3e8 / 77e9  # For a 77 GHz radar
+    # Generate synthetic data
+    adc_data = FMCWProcessor.generate_synthetic_data(
+        num_tx=num_tx,
+        num_rx=num_rx,
+        num_chirps=num_chirps,
+        num_samples=num_samples,
+        sampling_rate=sampling_rate,
+        frequency_slope=frequency_slope,
+        wavelength=wavelength,
+        target_params=target_params
+    )
 
-# Define target parameters
-target_params = [
-    {"range": 10, "velocity": 20 / 3.6, "aoa": 10, "rcs": 1}  # Range 10m, Velocity 20 km/h, AoA 10 degrees
-]
+    # Initialize processor
+    processor = FMCWProcessor(
+        adc_data=adc_data,
+        sample_rate=sampling_rate,
+        chirp_rate=1e3,
+        num_antennas=num_rx,
+        element_spacing=wavelength / 2,
+        wavelength=wavelength
+    )
 
-# Generate synthetic data
-adc_data = FMCWProcessor.generate_synthetic_data(
-    num_tx=num_tx,
-    num_rx=num_rx,
-    num_chirps=num_chirps,
-    num_samples=num_samples,
-    sampling_rate=sampling_rate,
-    frequency_slope=frequency_slope,
-    wavelength=wavelength,
-    target_params=target_params
-)
+    # Perform range and Doppler FFT
+    processor.plot_range()
+    processor.plot_doppler()
 
-# Initialize processor
-processor = FMCWProcessor(
-    adc_data=adc_data,
-    sample_rate=sampling_rate,
-    chirp_rate=1e3,
-    num_antennas=num_rx,
-    element_spacing=wavelength / 2,
-    wavelength=wavelength
-)
-
-# Perform range and Doppler FFT
-processor.plot_range()
-processor.plot_doppler()
-
-# Example Tx separation using orthogonal codes
-orthogonal_codes = [0, 1, 2, 3]
-processor.separate_tx_data(orthogonal_codes)
+    # Example Tx separation using orthogonal codes
+    orthogonal_codes = [0, 1, 2, 3]
+    processor.separate_tx_data(orthogonal_codes)
 
 
